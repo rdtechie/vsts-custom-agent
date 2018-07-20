@@ -25,5 +25,13 @@ RUN echo "===> Installing Terraform ${TERRAFORM_VERSION}..." \
 
  # Install Ansible
  RUN echo "===> Installing Ansible with the Azure Modules" \
-  && pip install --upgrade pip \
-  && sudo pip install ansible[azure]
+  && sudo pip install --upgrade pip \
+  && sudo pip install ansible[azure] \
+  && ansible-galaxy install Azure.azure_preview_modules \
+  && sudo pip install -r ~/.ansible/roles/Azure.azure_preview_modules/files/requirements-azure.txt \
+  && sudo pip install azure-common==1.1.12
+
+# Install PowerShell Core Extra Modules
+SHELL [ "pwsh", "-command" ]
+RUN Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+RUN Install-Module -Name AzureRM.NetCore,Pester,PSScriptAnalyzer -Scope AllUsers
